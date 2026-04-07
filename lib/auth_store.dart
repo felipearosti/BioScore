@@ -43,4 +43,13 @@ class AuthStore {
 
     return user.email == email.trim().toLowerCase() && user.password == password;
   }
+
+  bool isEmailRegistered(String email) {
+    final user = _registeredUser;
+    if (user == null) {
+      return false;
+    }
+
+    return user.email == email.trim().toLowerCase();
+  }
 }

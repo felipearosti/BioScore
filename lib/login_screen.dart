@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth_store.dart';
+import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -221,7 +222,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const ForgotPasswordScreen(),
+                                  ),
+                                );
+                              },
                               child: const Text('Esqueceu a senha?'),
                             ),
                           ),
