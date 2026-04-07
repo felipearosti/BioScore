@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
+import 'bioscore_provider.dart';
 import 'login_screen.dart';
 
 void main() {
-  runApp(const BioScoreApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => BioScoreProvider(),
+      child: const BioScoreApp(),
+    ),
+  );
 }
 
 class BioScoreApp extends StatelessWidget {

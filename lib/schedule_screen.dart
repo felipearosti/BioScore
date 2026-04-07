@@ -1,37 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'about_screen.dart';
+import 'appointment_registration_screen.dart';
+import 'bioscore_provider.dart';
 import 'login_screen.dart';
+import 'patients_list_screen.dart';
 
 class WeekDayOption {
   const WeekDayOption({required this.label, required this.day});
 
   final String label;
   final String day;
-}
-
-class PatientAppointment {
-  PatientAppointment({
-    required this.name,
-    required this.time,
-    required this.goal,
-  });
-
-  final String name;
-  final String time;
-  final String goal;
-
-  PatientAppointment copyWith({
-    String? name,
-    String? time,
-    String? goal,
-  }) {
-    return PatientAppointment(
-      name: name ?? this.name,
-      time: time ?? this.time,
-      goal: goal ?? this.goal,
-    );
-  }
 }
 
 class ScheduleScreen extends StatefulWidget {
@@ -42,7 +22,6 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  // Paleta visual principal da tela de agenda.
   static const Color _primaryColor = Color(0xFF2C3E50);
   static const Color _accentColor = Color(0xFF4DB6AC);
   static const Color _backgroundColor = Color(0xFFF0F4F8);
@@ -57,34 +36,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     WeekDayOption(label: 'SEX', day: '10'),
   ];
 
-  final Map<String, List<PatientAppointment>> _appointmentsByDay = {
-    '06': [
-      PatientAppointment(name: 'Carlos Mendonça', time: '08:00', goal: 'Análise de Bioimpedância'),
-      PatientAppointment(name: 'Marina Costa', time: '09:30', goal: 'Acompanhamento Nutricional'),
-      PatientAppointment(name: 'João Ferreira', time: '11:00', goal: 'Revisão de Metas Semanais'),
-    ],
-    '07': [
-      PatientAppointment(name: 'Ana Beatriz Lima', time: '08:15', goal: 'Avaliação Clínica Inicial'),
-      PatientAppointment(name: 'Ricardo Salles', time: '10:00', goal: 'Análise de Evolução Corporal'),
-    ],
-    '08': [
-      PatientAppointment(name: 'Fernanda Nogueira', time: '07:45', goal: 'Planejamento Alimentar'),
-      PatientAppointment(name: 'Paulo Henrique', time: '09:00', goal: 'Controle de Retenção Hídrica'),
-      PatientAppointment(name: 'Bruna Teixeira', time: '14:30', goal: 'Reavaliação Funcional'),
-    ],
-    '09': [
-      PatientAppointment(name: 'Eduardo Martins', time: '08:00', goal: 'Consulta de Ajuste Metabólico'),
-      PatientAppointment(name: 'Camila Rocha', time: '13:00', goal: 'Retorno Pós-Protocolo'),
-    ],
-    '10': [
-      PatientAppointment(name: 'Thiago Alves', time: '10:30', goal: 'Check-up de Composição Corporal'),
-      PatientAppointment(name: 'Larissa Gomes', time: '15:00', goal: 'Monitoramento de Adesão'),
-    ],
-  };
-
   bool _isMenuExpanded = true;
 
   String get _todayDayNumber => DateTime.now().day.toString().padLeft(2, '0');
+
+  List<Appointment> _appointmentsForDay(List<Appointment> appointments, String day) {
+    return appointments.where((appointment) {
+      final parts = appointment.date.split('/');
+      if (parts.isEmpty) {
+        return false;
+      }
+      return parts.first.padLeft(2, '0') == day;
+    }).toList();
+  }
 
   Widget _menuItem({
     required IconData icon,
@@ -119,9 +83,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       child: ListTile(
         dense: true,
         leading: Icon(icon, color: _primaryColor),
-        title: _isMenuExpanded
-            ? Text(label, style: const TextStyle(color: _textColor, fontWeight: FontWeight.w600))
-            : null,
+        title: Text(label, style: const TextStyle(color: _textColor, fontWeight: FontWeight.w600)),
         horizontalTitleGap: 8,
         minLeadingWidth: 24,
         onTap: onTap,
@@ -172,6 +134,26 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               children: [
                 _menuItem(icon: Icons.calendar_today_rounded, label: 'Consultas', selected: true),
                 _menuItem(
+                  icon: Icons.people,
+                  label: 'Pacientes',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PatientsListScreen()),
+                    );
+                  },
+                ),
+                _menuItem(
+                  icon: Icons.calendar_month,
+                  label: 'Nova Consulta',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AppointmentRegistrationScreen()),
+                    );
+                  },
+                ),
+                _menuItem(
                   icon: Icons.info_outline,
                   label: 'Sobre',
                   onTap: () {
@@ -205,7 +187,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               children: [
                 IconButton(
                   onPressed: () {},
-                  tooltip: 'Configurações',
+                  tooltip: 'Configuracoes',
                   icon: const Icon(Icons.settings_outlined),
                   color: _primaryColor,
                 ),
@@ -229,272 +211,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  Widget _sectionTitle(String text) {
-    return Text(
-      text,
-      style: const TextStyle(color: _primaryColor, fontSize: 18, fontWeight: FontWeight.w700),
-    );
-  }
-
-  Widget _infoGrid(List<Widget> children) {
-    return Wrap(spacing: 10, runSpacing: 10, children: children);
-  }
-
-  Widget _fieldBox(String label, String value) {
-    return SizedBox(
-      width: 290,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFD3DCE5)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(color: Color(0xFF7B8798), fontSize: 12)),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: const TextStyle(color: _textColor, fontSize: 15, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _fieldBoxEditable(String label, TextEditingController controller, bool isEditing) {
-    if (!isEditing) {
-      return _fieldBox(label, controller.text);
-    }
-
-    return SizedBox(
-      width: 290,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFD3DCE5)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(color: Color(0xFF7B8798), fontSize: 12)),
-            const SizedBox(height: 6),
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                isDense: true,
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-              style: const TextStyle(color: _textColor, fontSize: 15, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showPatientDialog({required String dayKey, required int itemIndex}) async {
-    var patient = _appointmentsByDay[dayKey]![itemIndex];
-
-    final nameController = TextEditingController(text: patient.name);
-    final timeController = TextEditingController(text: patient.time);
-    final goalController = TextEditingController(text: patient.goal);
-    final statusController = TextEditingController(text: 'Agendado');
-    final professionalController = TextEditingController(text: 'BioScore Health');
-    final modalityController = TextEditingController(text: 'Presencial');
-    final notesController = TextEditingController();
-    var isEditing = false;
-
-    await showDialog<void>(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 980, maxHeight: 680),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: const [
-                      BoxShadow(color: Color(0x14000000), blurRadius: 10, offset: Offset(0, 4)),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 18, 12, 12),
-                        child: Row(
-                          children: [
-                            Text(
-                              isEditing ? 'Editando Informações do Paciente' : 'Informações do Paciente',
-                              style: const TextStyle(
-                                color: _primaryColor,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              icon: const Icon(Icons.close_rounded, color: _primaryColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(height: 1, color: Color(0xFFD3DCE5)),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _sectionTitle('Dados do Atendimento'),
-                              const SizedBox(height: 12),
-                              _infoGrid([
-                                _fieldBoxEditable('Paciente', nameController, isEditing),
-                                _fieldBoxEditable('Horário', timeController, isEditing),
-                                _fieldBoxEditable('Objetivo', goalController, isEditing),
-                                _fieldBoxEditable('Status', statusController, isEditing),
-                                _fieldBoxEditable('Profissional', professionalController, isEditing),
-                                _fieldBoxEditable('Modalidade', modalityController, isEditing),
-                              ]),
-                              const SizedBox(height: 20),
-                              _sectionTitle('Observações'),
-                              const SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF8FAFC),
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: const Color(0xFFD3DCE5)),
-                                ),
-                                child: isEditing
-                                    ? TextField(
-                                        controller: notesController,
-                                        maxLines: null,
-                                        expands: true,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                          hintText: 'Adicione observações do paciente...',
-                                        ),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ),
-                              const SizedBox(height: 20),
-                              _sectionTitle('Checklist'),
-                              const SizedBox(height: 10),
-                              ...List.generate(
-                                6,
-                                (index) => Container(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF8FAFC),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: const Color(0xFFD3DCE5)),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(14),
-                            bottomRight: Radius.circular(14),
-                          ),
-                          border: Border(top: BorderSide(color: Colors.grey.shade200)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                if (!isEditing) {
-                                  setDialogState(() => isEditing = true);
-                                  return;
-                                }
-
-                                if (nameController.text.trim().isEmpty ||
-                                    timeController.text.trim().isEmpty ||
-                                    goalController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context)
-                                    ..clearSnackBars()
-                                    ..showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Preencha nome, horário e objetivo.'),
-                                        backgroundColor: Color(0xFFFF8A65),
-                                      ),
-                                    );
-                                  return;
-                                }
-
-                                setState(() {
-                                  patient = patient.copyWith(
-                                    name: nameController.text.trim(),
-                                    time: timeController.text.trim(),
-                                    goal: goalController.text.trim(),
-                                  );
-                                  _appointmentsByDay[dayKey]![itemIndex] = patient;
-                                });
-                                setDialogState(() => isEditing = false);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: _accentColor,
-                                foregroundColor: _primaryColor,
-                                minimumSize: const Size(170, 46),
-                              ),
-                              icon: Icon(isEditing ? Icons.save_outlined : Icons.edit_outlined),
-                              label: Text(isEditing ? 'Salvar edição' : 'Editar'),
-                            ),
-                            OutlinedButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: _primaryColor,
-                                side: const BorderSide(color: Color(0xFFD3DCE5)),
-                                minimumSize: const Size(108, 46),
-                              ),
-                              child: const Text('Fechar'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    nameController.dispose();
-    timeController.dispose();
-    goalController.dispose();
-    statusController.dispose();
-    professionalController.dispose();
-    modalityController.dispose();
-    notesController.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final appointments = context.watch<BioScoreProvider>().appointments;
+
     return Scaffold(
       backgroundColor: _backgroundColor,
       appBar: AppBar(
@@ -512,7 +232,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             _buildSideMenu(),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                padding: const EdgeInsets.all(16),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: ConstrainedBox(
@@ -529,10 +249,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         ],
                       ),
                       child: SizedBox(
-                        height: 210,
+                        height: 240,
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            const itemWidth = 190.0;
+                            const itemWidth = 210.0;
                             const spacing = 12.0;
                             final totalWidth =
                                 (_weekDays.length * itemWidth) + ((_weekDays.length - 1) * spacing);
@@ -540,7 +260,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             Widget buildDayCard(int index) {
                               final day = _weekDays[index];
                               final isToday = day.day == _todayDayNumber;
-                              final appointments = _appointmentsByDay[day.day] ?? const [];
+                              final dayAppointments = _appointmentsForDay(appointments, day.day);
 
                               return Container(
                                 width: itemWidth,
@@ -590,10 +310,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8),
-                                        child: appointments.isEmpty
+                                        child: dayAppointments.isEmpty
                                             ? const Center(
                                                 child: Text(
-                                                  'Sem pacientes',
+                                                  'Nenhuma consulta agendada para este dia',
+                                                  textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     color: Color(0xFF8B92A1),
                                                     fontWeight: FontWeight.w600,
@@ -601,54 +322,61 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                                 ),
                                               )
                                             : ListView.separated(
-                                                itemCount: appointments.length,
-                                                separatorBuilder: (_, separatorIndex) =>
-                                                    const SizedBox(height: 6),
+                                                itemCount: dayAppointments.length,
+                                                separatorBuilder: (_, index) => const SizedBox(height: 6),
                                                 itemBuilder: (context, itemIndex) {
-                                                  final patient = appointments[itemIndex];
+                                                  final appointment = dayAppointments[itemIndex];
 
-                                                  return InkWell(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    onTap: () => _showPatientDialog(
-                                                      dayKey: day.day,
-                                                      itemIndex: itemIndex,
+                                                  return Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 6,
                                                     ),
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 6,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(0xFFF8FAFC),
-                                                        borderRadius: BorderRadius.circular(10),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          CircleAvatar(
-                                                            radius: 14,
-                                                            backgroundColor: const Color(0xFFE0E6EE),
-                                                            child: Text(
-                                                              patient.name.substring(0, 1),
-                                                              style: const TextStyle(
-                                                                color: _primaryColor,
-                                                                fontWeight: FontWeight.w700,
-                                                              ),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(0xFFF8FAFC),
+                                                      borderRadius: BorderRadius.circular(10),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        CircleAvatar(
+                                                          radius: 14,
+                                                          backgroundColor: const Color(0xFFE0E6EE),
+                                                          child: Text(
+                                                            appointment.patientName.substring(0, 1),
+                                                            style: const TextStyle(
+                                                              color: _primaryColor,
+                                                              fontWeight: FontWeight.w700,
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 8),
-                                                          Expanded(
-                                                            child: Text(
-                                                              patient.name,
-                                                              maxLines: 1,
-                                                              overflow: TextOverflow.ellipsis,
-                                                              style: const TextStyle(
-                                                                color: _textColor,
-                                                                fontWeight: FontWeight.w600,
+                                                        ),
+                                                        const SizedBox(width: 8),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                appointment.patientName,
+                                                                maxLines: 1,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: const TextStyle(
+                                                                  color: _textColor,
+                                                                  fontWeight: FontWeight.w600,
+                                                                ),
                                                               ),
-                                                            ),
+                                                              const SizedBox(height: 2),
+                                                              Text(
+                                                                '${appointment.time} - ${appointment.type}',
+                                                                maxLines: 1,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: const TextStyle(
+                                                                  color: Color(0xFF6B7280),
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   );
                                                 },
@@ -675,7 +403,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             return ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: _weekDays.length,
-                              separatorBuilder: (_, separatorIndex) => const SizedBox(width: spacing),
+                              separatorBuilder: (_, index) => const SizedBox(width: spacing),
                               itemBuilder: (context, index) => buildDayCard(index),
                             );
                           },
