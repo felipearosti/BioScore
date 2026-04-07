@@ -1,90 +1,58 @@
 # BioScore
 
-Aplicativo Flutter para HealthTech focado em gestao de emagrecimento, com fluxo inicial de autenticacao (login e cadastro) e base visual padronizada.
+BioScore e um aplicativo desenvolvido para o contexto de HealthTech, com foco na gestao de emagrecimento e no acompanhamento estruturado do usuario ao longo da jornada de saude.
 
-## Tecnologias
+## Visao do Projeto
 
-- Flutter (Material 3)
-- Dart
-- Google Fonts (Poppins)
+O projeto foi concebido para oferecer uma base digital consistente para processos de autenticacao, evoluindo para modulos de acompanhamento clinico, metas e indicadores de progresso.
+
+Nesta etapa, a aplicacao contempla as telas iniciais de acesso e cadastro, com validacoes essenciais de dados e feedback visual orientado a usabilidade.
+
+## Objetivos
+
+- Estruturar uma base confiavel para autenticacao de usuarios.
+- Garantir experiencia de uso clara, objetiva e responsiva.
+- Estabelecer padrao visual coeso para a evolucao das proximas funcionalidades.
+
+## Escopo Implementado
+
+- Tema global com Material 3 e tipografia padronizada.
+- Tela de Login com validacao de campos e autenticacao local.
+- Tela de Cadastro de Usuario com validacoes de formulario.
+- Mascara de telefone no padrao nacional: (99) 99999-9999.
+- Feedback visual por SnackBar para sucesso e tratamento de erros.
+- Navegacao entre telas de login e cadastro.
 
 ## Identidade Visual
 
-- Cor primaria: `#1A365D` (Azul Petroleo)
-- Cor de destaque: `#2A9D8F` (Verde Esmeralda)
-- Cor de fundo: `#F8F9FA` (Off-White)
+- Cor primaria: #1A365D (Azul Petroleo)
+- Cor de destaque: #2A9D8F (Verde Esmeralda)
+- Cor de fundo: #F8F9FA (Off-White)
+- Tipografia: Poppins
 
-## Funcionalidades Atuais
+## Arquitetura Inicial
 
-- Tema global do aplicativo com Material Design
-- Tela de login com validacoes e feedback visual via SnackBar
-- Tela de cadastro com validacoes completas e mascara de telefone `(99) 99999-9999`
-- Navegacao entre login e cadastro
-- Validacao local de credenciais em memoria para fluxo de demonstracao
+- [lib/main.dart](lib/main.dart): configuracao do aplicativo e tema.
+- [lib/login_screen.dart](lib/login_screen.dart): fluxo de autenticacao.
+- [lib/register_screen.dart](lib/register_screen.dart): fluxo de cadastro.
+- [lib/auth_store.dart](lib/auth_store.dart): persistencia local em memoria para o estado atual do projeto.
 
-## Estrutura Principal
+## Requisitos Funcionais Atendidos
 
-- `lib/main.dart`: configuracao global do app e tema
-- `lib/login_screen.dart`: tela e regras de login
-- `lib/register_screen.dart`: tela e regras de cadastro
-- `lib/auth_store.dart`: armazenamento local em memoria para autenticacao
+- RF001: configuracao de tema e tela de login.
+- RF002: cadastro de usuario com validacoes obrigatorias.
+- RF006: feedback ao usuario por caixa de dialogo visual (SnackBar).
 
-## Como Rodar
+## Proximos Passos
 
-1. Instale dependencias:
+- Integracao com backend para autenticacao e persistencia real.
+- Implementacao de recuperacao de senha.
+- Evolucao para dashboard com indicadores de progresso.
+- Estruturacao da camada de estado para crescimento do produto.
 
-	```bash
-	flutter pub get
-	```
-
-2. Execute no navegador:
-
-	```bash
-	flutter run -d chrome
-	```
-
-3. Comandos uteis durante execucao:
-
-- `r` para hot reload
-- `R` para hot restart
-- `q` para encerrar
-
-## Qualidade e Validacao
-
-Antes de qualquer commit, rode:
+## Execucao do Projeto
 
 ```bash
-flutter analyze
-flutter test
+flutter pub get
+flutter run -d chrome
 ```
-
-## Fluxo de Commit Validado
-
-Padrao recomendado para este repositorio:
-
-1. Crie branch de feature:
-
-	```bash
-	git checkout -b feat/nome-curto-da-feature
-	```
-
-2. Implemente e valide localmente com `flutter analyze` e `flutter test`.
-
-3. Use mensagens curtas, objetivas e em portugues (maximo 60 caracteres):
-
-- `ajusta validacao do login`
-- `adiciona mascara no telefone`
-- `corrige retorno do cadastro`
-
-4. Abra Pull Request para `main`.
-
-## Roadmap
-
-- [x] RF001 - Tema base e tela de login
-- [x] RF002 - Cadastro de usuario
-- [x] RF006 - Feedback visual por SnackBar
-- [ ] Persistencia real de usuario (backend/banco)
-- [ ] Recuperacao de senha
-- [ ] Dashboard inicial com metricas de progresso
-- [ ] Arquitetura completa com Provider/Riverpod
-- [ ] Testes de widget e integracao para autenticacao
