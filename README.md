@@ -70,11 +70,11 @@ Padrao recomendado para este repositorio:
 
 2. Implemente e valide localmente com `flutter analyze` e `flutter test`.
 
-3. Use Conventional Commits:
+3. Use mensagens curtas, objetivas e em portugues (maximo 60 caracteres):
 
-- `feat: adiciona cadastro de usuario`
-- `fix: corrige validacao de login`
-- `refactor: organiza viewmodel de autenticacao`
+- `ajusta validacao do login`
+- `adiciona mascara no telefone`
+- `corrige retorno do cadastro`
 
 4. Abra Pull Request para `main`.
 
