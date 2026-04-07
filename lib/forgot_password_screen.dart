@@ -68,7 +68,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ..showSnackBar(
         SnackBar(
           content: const Text('Instruções enviadas para o e-mail informado'),
-          backgroundColor: Colors.green.shade700,
+          backgroundColor: const Color(0xFF4DB6AC),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),

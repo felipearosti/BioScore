@@ -10,9 +10,12 @@ void main() {
 class BioScoreApp extends StatelessWidget {
   const BioScoreApp({super.key});
 
-  static const Color _primaryColor = Color(0xFF1A365D);
-  static const Color _accentColor = Color(0xFF2D9CDB);
-  static const Color _backgroundColor = Color(0xFFF8F9FA);
+  static const Color _primaryColor = Color(0xFF2C3E50);
+  static const Color _accentColor = Color(0xFF4DB6AC);
+  static const Color _backgroundColor = Color(0xFFF0F4F8);
+  static const Color _surfaceColor = Color(0xFFD1D9E6);
+  static const Color _textColor = Color(0xFF2C3E50);
+  static const Color _alertColor = Color(0xFFFF8A65);
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +30,16 @@ class BioScoreApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(
           primary: _primaryColor,
           secondary: _accentColor,
-          surface: Colors.white,
+          surface: _surfaceColor,
+          error: _alertColor,
           onPrimary: Colors.white,
-          onSecondary: Colors.white,
-          onSurface: Color(0xFF1F2937),
+          onSecondary: _textColor,
+          onSurface: _textColor,
+          onError: _textColor,
         ),
         textTheme: textTheme,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+          backgroundColor: _backgroundColor,
           foregroundColor: _primaryColor,
           elevation: 0,
           centerTitle: true,
@@ -62,7 +67,7 @@ class BioScoreApp extends StatelessWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: _accentColor,
-            foregroundColor: Colors.white,
+            foregroundColor: _primaryColor,
             minimumSize: const Size.fromHeight(52),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),

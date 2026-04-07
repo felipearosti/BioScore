@@ -27,10 +27,11 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  static const Color _primaryColor = Color(0xFF1A365D);
-  static const Color _accentColor = Color(0xFF2D9CDB);
-  static const Color _backgroundColor = Color(0xFFF8F9FA);
-  static const Color _textColor = Color(0xFF2B2D42);
+  static const Color _primaryColor = Color(0xFF2C3E50);
+  static const Color _accentColor = Color(0xFF4DB6AC);
+  static const Color _backgroundColor = Color(0xFFF0F4F8);
+  static const Color _textColor = Color(0xFF2C3E50);
+  static const Color _panelColor = Color(0xFFD1D9E6);
 
   final List<WeekDayOption> _weekDays = const [
     WeekDayOption(label: 'SEG', day: '06'),
@@ -348,13 +349,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _panelColor,
                 borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFD3DCE5)),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x14000000),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
+                    color: Color(0x100F172A),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -388,7 +390,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: isToday ? _accentColor : const Color(0xFFDCE2EA),
+                                color: isToday ? _accentColor : const Color(0xFFD3DCE5),
                                 width: isToday ? 2 : 1,
                               ),
                             ),
@@ -398,7 +400,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                   width: double.infinity,
                                   padding: const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: isToday ? _accentColor : const Color(0xFFF2F4F7),
+                                    color: isToday ? _accentColor : const Color(0xFFF8FAFC),
                                     borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(10),
                                       topRight: Radius.circular(10),
@@ -409,7 +411,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       Text(
                                         day.label,
                                         style: TextStyle(
-                                          color: isToday ? Colors.white : _primaryColor,
+                                          color: _primaryColor,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 13,
                                         ),
@@ -418,7 +420,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       Text(
                                         day.day,
                                         style: TextStyle(
-                                          color: isToday ? Colors.white : _primaryColor,
+                                          color: _primaryColor,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 28,
                                           height: 1,
@@ -456,14 +458,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                                     vertical: 6,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                    color: const Color(0xFFF4F6FA),
+                                                    color: const Color(0xFFF8FAFC),
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   child: Row(
                                                     children: [
                                                       CircleAvatar(
                                                         radius: 14,
-                                                        backgroundColor: const Color(0xFFE0E5EE),
+                                                        backgroundColor: const Color(0xFFE0E6EE),
                                                         child: Text(
                                                           patient.name.substring(0, 1),
                                                           style: const TextStyle(

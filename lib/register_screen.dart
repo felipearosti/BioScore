@@ -71,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _showFeedback({required String message, required bool isError}) {
-    final color = isError ? Colors.red.shade700 : Colors.green.shade700;
+    final color = isError ? const Color(0xFFFF8A65) : const Color(0xFF4DB6AC);
 
     ScaffoldMessenger.of(context)
       ..clearSnackBars()

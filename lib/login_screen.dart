@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showFeedback({required String message, required bool isError}) {
-    final color = isError ? Colors.red.shade700 : Colors.green.shade700;
+    final color = isError ? const Color(0xFFFF8A65) : const Color(0xFF4DB6AC);
 
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
@@ -200,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Gestão inteligente de emagrecimento',
                             textAlign: TextAlign.center,
                             style: textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF6B7280),
+                              color: const Color(0xFF2C3E50),
                             ),
                           ),
                           const SizedBox(height: 32),
