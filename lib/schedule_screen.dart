@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'about_screen.dart';
+import 'login_screen.dart';
+
 class WeekDayOption {
   const WeekDayOption({required this.label, required this.day});
 
@@ -82,7 +85,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   String get _todayDayNumber => DateTime.now().day.toString().padLeft(2, '0');
 
-  Widget _menuItem({required IconData icon, required String label, bool selected = false}) {
+  Widget _menuItem({
+    required IconData icon,
+    required String label,
+    bool selected = false,
+    VoidCallback? onTap,
+  }) {
+    if (!_isMenuExpanded) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFEAF2FB) : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: SizedBox(
+            height: 44,
+            child: Center(child: Icon(icon, color: _primaryColor)),
+          ),
+        ),
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -97,7 +123,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             : null,
         horizontalTitleGap: 8,
         minLeadingWidth: 24,
-        onTap: () {},
+        onTap: onTap,
       ),
     );
   }
@@ -144,8 +170,27 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             child: Column(
               children: [
                 _menuItem(icon: Icons.calendar_today_rounded, label: 'Consultas', selected: true),
-                _menuItem(icon: Icons.person_outline_rounded, label: 'Perfil'),
-                _menuItem(icon: Icons.logout_rounded, label: 'Sair'),
+                _menuItem(
+                  icon: Icons.info_outline,
+                  label: 'Sobre',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AboutScreen()),
+                    );
+                  },
+                ),
+                _menuItem(
+                  icon: Icons.logout_rounded,
+                  label: 'Sair',
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  },
+                ),
               ],
             ),
           ),
