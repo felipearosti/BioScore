@@ -42,7 +42,7 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  // Paleta principal da tela de agenda.
+  // Paleta visual principal da tela de agenda.
   static const Color _primaryColor = Color(0xFF2C3E50);
   static const Color _accentColor = Color(0xFF4DB6AC);
   static const Color _backgroundColor = Color(0xFFF0F4F8);
