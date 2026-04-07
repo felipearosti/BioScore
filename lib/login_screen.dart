@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'auth_store.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
+import 'schedule_screen.dart';
 
 class AuthViewModel extends ChangeNotifier {
   static final RegExp _emailRegex = RegExp(
@@ -18,7 +19,8 @@ class AuthViewModel extends ChangeNotifier {
       return 'Preencha e-mail e senha para continuar.';
     }
 
-    if (!_emailRegex.hasMatch(email)) {
+    final normalizedLogin = email.trim().toLowerCase();
+    if (normalizedLogin != AuthStore.adminUsername && !_emailRegex.hasMatch(email)) {
       return 'Digite um e-mail em formato válido.';
     }
 
@@ -31,21 +33,21 @@ class AuthViewModel extends ChangeNotifier {
 
     await Future<void>.delayed(const Duration(milliseconds: 300));
 
+    if (AuthStore.instance.validateLogin(email: email, password: password)) {
+      _isAuthenticating = false;
+      notifyListeners();
+      return null;
+    }
+
     if (!AuthStore.instance.hasRegisteredUser) {
       _isAuthenticating = false;
       notifyListeners();
       return 'Nenhuma conta cadastrada. Crie seu cadastro primeiro.';
     }
 
-    if (!AuthStore.instance.validateLogin(email: email, password: password)) {
-      _isAuthenticating = false;
-      notifyListeners();
-      return 'E-mail ou senha inválidos.';
-    }
-
     _isAuthenticating = false;
     notifyListeners();
-    return null;
+    return 'E-mail ou senha inválidos.';
   }
 }
 
@@ -132,6 +134,17 @@ class _LoginScreenState extends State<LoginScreen> {
     _showFeedback(
       message: 'Login validado com sucesso!',
       isError: false,
+    );
+
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (_) => const ScheduleScreen(),
+      ),
     );
   }
 

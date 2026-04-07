@@ -11,7 +11,7 @@ class BioScoreApp extends StatelessWidget {
   const BioScoreApp({super.key});
 
   static const Color _primaryColor = Color(0xFF1A365D);
-  static const Color _accentColor = Color(0xFF2A9D8F);
+  static const Color _accentColor = Color(0xFF2D9CDB);
   static const Color _backgroundColor = Color(0xFFF8F9FA);
 
   @override

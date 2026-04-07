@@ -16,6 +16,8 @@ class AuthStore {
   AuthStore._();
 
   static final AuthStore instance = AuthStore._();
+  static const String adminUsername = 'admin';
+  static const String adminPassword = 'filas';
 
   RegisteredUser? _registeredUser;
 
@@ -36,12 +38,17 @@ class AuthStore {
   }
 
   bool validateLogin({required String email, required String password}) {
+    final normalizedLogin = email.trim().toLowerCase();
+    if (normalizedLogin == adminUsername && password == adminPassword) {
+      return true;
+    }
+
     final user = _registeredUser;
     if (user == null) {
       return false;
     }
 
-    return user.email == email.trim().toLowerCase() && user.password == password;
+    return user.email == normalizedLogin && user.password == password;
   }
 
   bool isEmailRegistered(String email) {
