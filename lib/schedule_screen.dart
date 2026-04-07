@@ -114,7 +114,127 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     ],
   };
 
+  bool _isMenuExpanded = true;
+
   String get _todayDayNumber => DateTime.now().day.toString().padLeft(2, '0');
+
+  Widget _menuItem({
+    required IconData icon,
+    required String label,
+    bool selected = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: selected ? const Color(0xFFEAF2FB) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        dense: true,
+        leading: Icon(icon, color: _primaryColor),
+        title: _isMenuExpanded
+            ? Text(
+                label,
+                style: const TextStyle(
+                  color: _textColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : null,
+        horizontalTitleGap: 8,
+        minLeadingWidth: 24,
+        onTap: () {},
+      ),
+    );
+  }
+
+  Widget _buildSideMenu() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      width: _isMenuExpanded ? 228 : 78,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          right: BorderSide(color: Color(0xFFD3DCE5)),
+        ),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 16, 14, 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: _accentColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.monitor_heart, color: _primaryColor, size: 20),
+                ),
+                if (_isMenuExpanded) ...[
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      'BioScore',
+                      style: TextStyle(
+                        color: _primaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xFFD3DCE5)),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              children: [
+                _menuItem(icon: Icons.calendar_today_rounded, label: 'Consultas', selected: true),
+                _menuItem(icon: Icons.person_outline_rounded, label: 'Perfil'),
+                _menuItem(icon: Icons.logout_rounded, label: 'Sair'),
+              ],
+            ),
+          ),
+          const Spacer(),
+          const Divider(height: 1, color: Color(0xFFD3DCE5)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+            child: Column(
+              crossAxisAlignment: _isMenuExpanded
+                  ? CrossAxisAlignment.stretch
+                  : CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  tooltip: 'Configurações',
+                  icon: const Icon(Icons.settings_outlined),
+                  color: _primaryColor,
+                ),
+                if (_isMenuExpanded)
+                  TextButton.icon(
+                    onPressed: () => setState(() => _isMenuExpanded = false),
+                    icon: const Icon(Icons.keyboard_double_arrow_left_rounded, size: 18),
+                    label: const Text('Fechar menu'),
+                  )
+                else
+                  IconButton(
+                    onPressed: () => setState(() => _isMenuExpanded = true),
+                    icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
+                    color: _primaryColor,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _showPatientDialog(PatientAppointment patient) {
     showDialog<void>(
@@ -319,192 +439,188 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
         ),
       ),
-      endDrawer: Drawer(
-        backgroundColor: Colors.white,
-        child: SafeArea(
-          child: ListView(
-            children: const [
-              ListTile(
-                leading: Icon(Icons.person_outline),
-                title: Text('Perfil'),
-              ),
-              ListTile(
-                leading: Icon(Icons.settings_outlined),
-                title: Text('Configurações'),
-              ),
-              ListTile(
-                leading: Icon(Icons.logout_rounded),
-                title: Text('Sair'),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: Row(
           children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: _panelColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFD3DCE5)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x100F172A),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Agendas da Semana',
-                    style: TextStyle(
-                      color: _primaryColor,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  SizedBox(
-                    height: 210,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _weekDays.length,
-                      itemBuilder: (context, index) {
-                        final day = _weekDays[index];
-                        final isToday = day.day == _todayDayNumber;
-                        final appointments = _appointmentsByDay[day.day] ?? const [];
+            _buildSideMenu(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1180),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: _panelColor,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFD3DCE5)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x100F172A),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: SizedBox(
+                        height: 210,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            const itemWidth = 190.0;
+                            const spacing = 12.0;
+                            final totalWidth =
+                                (_weekDays.length * itemWidth) + ((_weekDays.length - 1) * spacing);
 
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: Container(
-                            width: 190,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isToday ? _accentColor : const Color(0xFFD3DCE5),
-                                width: isToday ? 2 : 1,
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: isToday ? _accentColor : const Color(0xFFF8FAFC),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        day.label,
-                                        style: TextStyle(
-                                          color: _primaryColor,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        day.day,
-                                        style: TextStyle(
-                                          color: _primaryColor,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 28,
-                                          height: 1,
-                                        ),
-                                      ),
-                                    ],
+                            Widget buildDayCard(int index) {
+                              final day = _weekDays[index];
+                              final isToday = day.day == _todayDayNumber;
+                              final appointments = _appointmentsByDay[day.day] ?? const [];
+
+                              return Container(
+                                width: itemWidth,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: isToday ? _accentColor : const Color(0xFFD3DCE5),
+                                    width: isToday ? 2 : 1,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: appointments.isEmpty
-                                        ? const Center(
-                                            child: Text(
-                                              'Sem pacientes',
-                                              style: TextStyle(
-                                                color: Color(0xFF8B92A1),
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: isToday ? _accentColor : const Color(0xFFF8FAFC),
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            day.label,
+                                            style: const TextStyle(
+                                              color: _primaryColor,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 13,
                                             ),
-                                          )
-                                        : ListView.separated(
-                                            itemCount: appointments.length,
-                                          separatorBuilder: (_, index) =>
-                                                const SizedBox(height: 6),
-                                            itemBuilder: (context, itemIndex) {
-                                              final patient = appointments[itemIndex];
-
-                                              return InkWell(
-                                                borderRadius: BorderRadius.circular(10),
-                                                onTap: () => _showPatientDialog(patient),
-                                                child: Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 6,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(0xFFF8FAFC),
-                                                    borderRadius: BorderRadius.circular(10),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      CircleAvatar(
-                                                        radius: 14,
-                                                        backgroundColor: const Color(0xFFE0E6EE),
-                                                        child: Text(
-                                                          patient.name.substring(0, 1),
-                                                          style: const TextStyle(
-                                                            color: _primaryColor,
-                                                            fontWeight: FontWeight.w700,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Expanded(
-                                                        child: Text(
-                                                          patient.name,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: const TextStyle(
-                                                            color: _textColor,
-                                                            fontWeight: FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            day.day,
+                                            style: const TextStyle(
+                                              color: _primaryColor,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 28,
+                                              height: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: appointments.isEmpty
+                                            ? const Center(
+                                                child: Text(
+                                                  'Sem pacientes',
+                                                  style: TextStyle(
+                                                    color: Color(0xFF8B92A1),
+                                                    fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                  ),
+                                              )
+                                            : ListView.separated(
+                                                itemCount: appointments.length,
+                                              separatorBuilder: (_, separatorIndex) =>
+                                                const SizedBox(height: 6),
+                                                itemBuilder: (context, itemIndex) {
+                                                  final patient = appointments[itemIndex];
+
+                                                  return InkWell(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    onTap: () => _showPatientDialog(patient),
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 6,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(0xFFF8FAFC),
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          CircleAvatar(
+                                                            radius: 14,
+                                                            backgroundColor: const Color(0xFFE0E6EE),
+                                                            child: Text(
+                                                              patient.name.substring(0, 1),
+                                                              style: const TextStyle(
+                                                                color: _primaryColor,
+                                                                fontWeight: FontWeight.w700,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(width: 8),
+                                                          Expanded(
+                                                            child: Text(
+                                                              patient.name,
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: const TextStyle(
+                                                                color: _textColor,
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                              );
+                            }
+
+                            if (constraints.maxWidth > totalWidth) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  for (var i = 0; i < _weekDays.length; i++) ...[
+                                    if (i > 0) const SizedBox(width: spacing),
+                                    buildDayCard(i),
+                                  ],
+                                ],
+                              );
+                            }
+
+                            return ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _weekDays.length,
+                              separatorBuilder: (_, separatorIndex) =>
+                                  const SizedBox(width: spacing),
+                              itemBuilder: (context, index) => buildDayCard(index),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-            const Spacer(),
           ],
         ),
       ),
