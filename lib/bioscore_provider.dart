@@ -6,11 +6,17 @@ class Patient {
   const Patient({
     required this.name,
     required this.cpf,
+    required this.birthDate,
+    required this.weight,
+    required this.height,
     required this.goal,
   });
 
   final String name;
   final String cpf;
+  final String birthDate;
+  final String weight;
+  final String height;
   final String goal;
 }
 
@@ -33,11 +39,17 @@ class BioScoreProvider extends ChangeNotifier {
     const Patient(
       name: 'Carlos Mendonca',
       cpf: '111.222.333-44',
+      birthDate: '12/03/1990',
+      weight: '82.0',
+      height: '1.78',
       goal: 'Emagrecimento',
     ),
     const Patient(
       name: 'Ana Beatriz Lima',
       cpf: '555.666.777-88',
+      birthDate: '22/11/1995',
+      weight: '67.5',
+      height: '1.65',
       goal: 'Hipertrofia',
     ),
   ];

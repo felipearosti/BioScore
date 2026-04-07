@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'bioscore_provider.dart';
+import 'patient_detail_screen.dart';
 import 'patient_registration_screen.dart';
 
 class PatientsListScreen extends StatelessWidget {
@@ -80,6 +81,14 @@ class PatientsListScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 10),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PatientDetailScreen(patient: patient),
+                        ),
+                      );
+                    },
                     leading: CircleAvatar(
                       backgroundColor: const Color(0xFFE5F4F2),
                       child: Text(

@@ -70,6 +70,9 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     final newPatient = Patient(
       name: _nameController.text.trim(),
       cpf: _cpfController.text.trim(),
+      birthDate: _birthDateController.text.trim(),
+      weight: _weightController.text.trim(),
+      height: _heightController.text.trim(),
       goal: _goalController.text.trim(),
     );
 
